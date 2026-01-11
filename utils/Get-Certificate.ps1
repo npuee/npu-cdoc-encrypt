@@ -8,40 +8,40 @@ function _get-esteid-certificate {
     $EstIDLdapDN = "dc=ESTEID,c=EE"
     $NationalIDDN = "*ou=Authentication,o=Identity card of Estonian citizen,dc=ESTEID,c=EE"
 
-    Write-Verbose "Get-Certificate called with ID='$ID'"
-        # Define LDAP connection
-        $ldapdn = 'LDAP://' + $EstIDLdapURL + ":" + $EstIDLdapPort + "/" + $EstIDLdapDN
-        $auth = [System.DirectoryServices.AuthenticationTypes]::Anonymous
-        $ldap = New-Object System.DirectoryServices.DirectoryEntry($ldapdn, $null, $null, $auth)
+    Write-Verbose "Downloading certificate from esteid.ldap.sk.ee for ID '$ID'"
+    # Define LDAP connection
+    $ldapdn = 'LDAP://' + $EstIDLdapURL + ":" + $EstIDLdapPort + "/" + $EstIDLdapDN
+    $auth = [System.DirectoryServices.AuthenticationTypes]::Anonymous
+    $ldap = New-Object System.DirectoryServices.DirectoryEntry($ldapdn, $null, $null, $auth)
 
-        # LDAP Searcher
-        $ds = New-Object System.DirectoryServices.DirectorySearcher($ldap)
-        $IDCodeFilter = "(serialNumber=PNOEE-$ID)"
-        $ds.Filter = $IDCodeFilter
-        [void]$ds.PropertiesToLoad.Add("usercertificate;binary")
+    # LDAP Searcher
+    $ds = New-Object System.DirectoryServices.DirectorySearcher($ldap)
+    $IDCodeFilter = "(serialNumber=PNOEE-$ID)"
+    $ds.Filter = $IDCodeFilter
+    [void]$ds.PropertiesToLoad.Add("usercertificate;binary")
 
-        $SearchResults = $ds.FindAll()
+    $SearchResults = $ds.FindAll()
 
-        $certBytes = $null
-        foreach ($result in $SearchResults) {
-            if ($result.Path -like $NationalIDDN) {
-                if ($result.Properties['usercertificate;binary'].Count -gt 0) {
-                    $value = $result.Properties['usercertificate;binary'][0]
-                    if ($value -is [byte[]]) {
-                        $certBytes = $value
-                    }
-                    else {
-                        try {
-                            $certBytes = [System.Convert]::FromBase64String($value)
-                        } catch {
-                            $certBytes = [System.Text.Encoding]::Default.GetBytes($value.ToString())
-                        }
-                    }
-                    break
+    $certBytes = $null
+    foreach ($result in $SearchResults) {
+        if ($result.Path -like $NationalIDDN) {
+            if ($result.Properties['usercertificate;binary'].Count -gt 0) {
+                $value = $result.Properties['usercertificate;binary'][0]
+                if ($value -is [byte[]]) {
+                    $certBytes = $value
                 }
+                else {
+                    try {
+                        $certBytes = [System.Convert]::FromBase64String($value)
+                    } catch {
+                        $certBytes = [System.Text.Encoding]::Default.GetBytes($value.ToString())
+                    }
+                }
+                break
             }
         }
-        return $certBytes
+    }
+    return $certBytes
 }
 
 function _get-thales-certificate {
@@ -53,8 +53,7 @@ function _get-thales-certificate {
     $ThalesLdapPort = 636
     $ThalesLdapDN = "dc=ESTEID,c=EE,dc=eidpki,dc=ee"
     $NationalIDDN = "*ou=Authentication,o=IdentityCardEstonianCitizen,dc=ESTEID,c=EE,dc=eidpki,dc=ee"
-
-    Write-Verbose "Get-Certificate called with ID='$ID'"
+    Write-Verbose "Downloading certificate from ldap-test.eidpki.ee for ID '$ID'"
         # Define LDAP connection
     $ldapdn = 'LDAP://' + $ThalesLdapURL + ":" + $ThalesLdapPort + "/" + $ThalesLdapDN
     $auth = [System.DirectoryServices.AuthenticationTypes]::Anonymous
@@ -114,10 +113,9 @@ function Get-Certificate {
         [string]
         $Out
     )
-        Write-Verbose "Downloading certificate from esteid.ldap.sk.ee for ID '$ID'"
+
         $certBytes = _get-esteid-certificate -ID $ID
         if (-not $certBytes) {
-            Write-Verbose "Downloading certificate from ldap-test.eidpki.ee for ID '$ID'"
             $certBytes = _get-thales-certificate -ID $ID
         }
         if (-not $certBytes) {
