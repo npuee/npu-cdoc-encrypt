@@ -87,3 +87,7 @@ Get-Content 'C:\data\input.cdoc' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' 
 Issues and pull requests are welcome. For integration help (certificate retrieval, additional cmdlets, automated tests), open an issue describing the change.
 
 For more details, see the module manifest (`npu-cdoc-encrypt.psd1`) and implementation (`npu-cdoc-encrypt.psm1`).
+
+## References
+
+- libcdoc — `cdoc-tool.exe` included in this repository was originally built from the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been modified for use in this project.
