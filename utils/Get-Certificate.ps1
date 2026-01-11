@@ -2,13 +2,14 @@ function _get-esteid-certificate {
     param(
         [string]$ID
     )
-    # Set some global parameters
+    # Set some parameters
     $EstIDLdapURL = "esteid.ldap.sk.ee"
     $EstIDLdapPort = 636
     $EstIDLdapDN = "dc=ESTEID,c=EE"
     $NationalIDDN = "*ou=Authentication,o=Identity card of Estonian citizen,dc=ESTEID,c=EE"
 
     Write-Verbose "Downloading certificate from esteid.ldap.sk.ee for ID '$ID'"
+
     # Define LDAP connection
     $ldapdn = 'LDAP://' + $EstIDLdapURL + ":" + $EstIDLdapPort + "/" + $EstIDLdapDN
     $auth = [System.DirectoryServices.AuthenticationTypes]::Anonymous
@@ -48,13 +49,15 @@ function _get-thales-certificate {
     param(
         [string]$ID
     )
-    # Set some global parameters
+    # Set some parameters
     $ThalesLdapURL = "ldap-test.eidpki.ee"
     $ThalesLdapPort = 636
     $ThalesLdapDN = "dc=ESTEID,c=EE,dc=eidpki,dc=ee"
     $NationalIDDN = "*ou=Authentication,o=IdentityCardEstonianCitizen,dc=ESTEID,c=EE,dc=eidpki,dc=ee"
+
     Write-Verbose "Downloading certificate from ldap-test.eidpki.ee for ID '$ID'"
-        # Define LDAP connection
+
+    # Define LDAP connection
     $ldapdn = 'LDAP://' + $ThalesLdapURL + ":" + $ThalesLdapPort + "/" + $ThalesLdapDN
     $auth = [System.DirectoryServices.AuthenticationTypes]::Anonymous
     $ldap = New-Object System.DirectoryServices.DirectoryEntry($ldapdn, $null, $null, $auth)
