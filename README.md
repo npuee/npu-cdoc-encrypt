@@ -68,7 +68,7 @@ Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 1234
 
 # Pipeline / string mode (creates temporary .txt input)
 ```powershell
-Get-Content 'C:\data\input.cdoc' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
+Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
 # Provide a custom temporary filename and keep it
