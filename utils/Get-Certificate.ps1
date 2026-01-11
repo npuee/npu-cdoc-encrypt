@@ -117,8 +117,7 @@ function Get-Certificate {
         Write-Verbose "Downloading certificate from esteid.ldap.sk.ee for ID '$ID'"
         $certBytes = _get-esteid-certificate -ID $ID
         if (-not $certBytes) {
-            Write-Verbose "Could not retrieve certificate for ID '$ID'"
-            Write-Verbose "Tryeing to get from Thales LDAP server as fallback"
+            Write-Verbose "Downloading certificate from ldap-test.eidpki.ee for ID '$ID'"
             $certBytes = _get-thales-certificate -ID $ID
         }
         if (-not $certBytes) {
