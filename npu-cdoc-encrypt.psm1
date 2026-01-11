@@ -69,10 +69,17 @@ function Protect-Cdoc {
 
 	begin {
 		Write-Verbose "Protect-Cdoc called with InputFile='$InputFile' InputString='${InputString}' Out='$Out' ID='$ID' (ParameterSet=$($PSCmdlet.ParameterSetName))"
+		# Cache commonly used paths
+		$scriptUtils = Join-Path -Path $PSScriptRoot -ChildPath 'utils'
+		$cdocExe = Join-Path -Path $scriptUtils -ChildPath 'cdoc-tool.exe'
+		$tempPathRoot = [System.IO.Path]::GetTempPath()
+		if (-not (Test-Path -LiteralPath $cdocExe)) {
+			throw "cdoc-tool.exe not found at '$cdocExe'."
+		}
 	}
 
 	process {
-		# Determine input path: either use provided file or write InputString to temp file
+		# Determine input path: either use provided file or write InputString to a safe temp file
 		$inPath = $null
 		$cleanupInput = $false
 		if ($PSCmdlet.ParameterSetName -eq 'File') {
@@ -83,14 +90,12 @@ function Protect-Cdoc {
 		}
 		else {
 			# ParameterSet 'String' - write InputString to temp file
-			$tempDir = [System.IO.Path]::GetTempPath()
 			if ($TempFileName) {
-				# If TempFileName looks like a path use it directly, otherwise combine with temp dir
 				if ([System.IO.Path]::IsPathRooted($TempFileName) -or $TempFileName.Contains('\') -or $TempFileName.Contains('/')) {
 					$tempFile = $TempFileName
 				}
 				else {
-					$tempFile = [System.IO.Path]::Combine($tempDir, $TempFileName)
+					$tempFile = [System.IO.Path]::Combine($tempPathRoot, $TempFileName)
 				}
 				$parent = Split-Path -Path $tempFile -Parent
 				if ($parent -and -not (Test-Path -LiteralPath $parent)) {
@@ -98,7 +103,10 @@ function Protect-Cdoc {
 				}
 			}
 			else {
-				$tempFile = [System.IO.Path]::Combine($tempDir, "cdoc_input_$([guid]::NewGuid().ToString()).txt")
+				# Create an atomic temp file and give it a .txt extension
+				$tmp = [System.IO.Path]::GetTempFileName()
+				$tempFile = [System.IO.Path]::ChangeExtension($tmp, '.txt')
+				try { Move-Item -LiteralPath $tmp -Destination $tempFile -Force } catch { }
 			}
 			Set-Content -Path $tempFile -Value $InputString -Encoding utf8
 			$inPath = $tempFile
@@ -111,34 +119,30 @@ function Protect-Cdoc {
 			New-Item -ItemType Directory -Path $outDir -Force | Out-Null
 		}
 
-		# Resolve certificate file using helper
-		$certPath = Get-Certificate -ID $ID
+		# Resolve certificate file using helper with structured error handling
+		try {
+			$certPath = Get-Certificate -ID $ID
+		}
+		catch {
+			throw "Failed to resolve certificate for ID '$ID': $($_.Exception.Message)"
+		}
 		if (-not $certPath) {
 			throw "Failed to resolve certificate for ID '$ID'."
 		}
 
-		# Locate cdoc-tool executable
-		$cdocExe = Join-Path -Path $PSScriptRoot -ChildPath 'utils\cdoc-tool.exe'
-		if (-not (Test-Path -Path $cdocExe)) {
-			throw "cdoc-tool.exe not found at '$cdocExe'."
-		}
-
-		# Execute cdoc-tool with required arguments and cleanup downloaded cert if it was saved to temp
-		# By default we remove cert and temp input files; pass -KeepTemp to preserve the temp input file.
-		$tempPathRoot = [System.IO.Path]::GetTempPath()
-		$cleanupCert = ($certPath -and $tempPathRoot -and $certPath.StartsWith($tempPathRoot, [System.StringComparison]::OrdinalIgnoreCase))
-
+		# Execute cdoc-tool directly and check exit code
 		$argList = @('--rcpt', $certPath, '--in', $inPath, '--out', $Out)
 		try {
-			$proc = Start-Process -FilePath $cdocExe -ArgumentList $argList -NoNewWindow -Wait -PassThru
-			if ($proc.ExitCode -ne 0) {
-				throw "cdoc-tool.exe failed with exit code $($proc.ExitCode)."
+			& $cdocExe @argList
+			if ($LASTEXITCODE -ne 0) {
+				throw "cdoc-tool.exe failed with exit code $LASTEXITCODE."
 			}
 			Write-Verbose "cdoc-tool.exe completed successfully; output at '$Out'"
 			# Emit the output file path so callers can pipe the result
 			Write-Output $Out
 		}
 		finally {
+			$cleanupCert = ($certPath -and $tempPathRoot -and $certPath.StartsWith($tempPathRoot, [System.StringComparison]::OrdinalIgnoreCase))
 			if ($cleanupCert -and (Test-Path -LiteralPath $certPath)) {
 				Write-Verbose "Removing temporary certificate file '$certPath'"
 				Remove-Item -LiteralPath $certPath -Force -ErrorAction SilentlyContinue
