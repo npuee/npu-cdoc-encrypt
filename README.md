@@ -18,52 +18,72 @@ Import the module (from the module folder):
 Import-Module .\npu-cdoc-encrypt.psm1
 ```
 
-Basic `Protect-Cdoc` usage:
+# npu-cdoc-encrypt
+
+This PowerShell module provides the `Protect-Cdoc` cmdlet to protect (encrypt) CDOC files using an X.509 certificate resolved by an 11‑digit identifier.
+
+## Synopsis
+
+Protects a CDOC using a certificate identified by an 11‑digit ID and the bundled `cdoc-tool.exe` utility.
+
+## Syntax
 
 ```powershell
-Protect-Cdoc -InputFile C:\data\input.cdoc -Out C:\data\output.cdoc -ID 12345678901
+Protect-Cdoc -InputFile <String> -Out <String> -ID <String>
 
-Or pass input via pipeline/string:
+Protect-Cdoc -InputString <String> -Out <String> -ID <String> [-TempFileName <String>] [-KeepTemp]
+```
 
+## Description
+
+`Protect-Cdoc` accepts either a path to an input file (`-InputFile`) or raw content via `-InputString`/pipeline, resolves a recipient certificate by calling `Get-Certificate -ID <ID>`, and invokes `utils\cdoc-tool.exe` with the arguments `--rcpt <certFile> --in <input> --out <output>` to perform protection. Temporary files (downloaded certificate and temporary input) are removed by default.
+
+## Files of interest
+
+- Module: `npu-cdoc-encrypt.psm1`
+- Manifest: `npu-cdoc-encrypt.psd1`
+- Helper: `utils/Get-Certificate.ps1`
+- Bundled tool: `utils/cdoc-tool.exe` (and supporting DLLs)
+
+## Parameters
+
+- `-InputFile` (String) — Path to an existing CDOC input file. Use this parameter or `-InputString`.
+- `-InputString` (String) — Raw input content. When used, a temporary `.txt` input file is created unless the pipeline provides a file.
+- `-TempFileName` (String) — Optional name or path for the temporary input file created when using `-InputString`.
+- `-Out` (String) — Destination path for the protected output CDOC file. Parent directories are created if needed.
+- `-ID` (String) — 11‑digit numeric certificate identifier. Validated by the cmdlet (regex `^\d{11}$`).
+- `-KeepTemp` (Switch) — Preserve the temporary input file created for `-InputString`.
+
+## Get-Certificate
+
+`Get-Certificate -ID <String> [-Out <String>]` resolves an 11‑digit ID to a certificate, saves it to disk, and returns the full path to the saved certificate file. If `-Out` is provided and is a directory the certificate will be written as `cert_<ID>.cer`; if `-Out` is a file path it is used directly. On failure the helper exits with code `1`.
+
+## Examples
+
+# File mode
 ```powershell
-Get-Content C:\data\input.cdoc -Raw | Protect-Cdoc -Out C:\data\output.cdoc -ID 12345678901
+Import-Module .\npu-cdoc-encrypt.psm1
+Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
-```
 
-Notes:
-- `-ID` must be an 11-digit numeric identifier (validated by the function).
-- `Protect-Cdoc` resolves the certificate by calling `Get-Certificate -ID <ID>` and
-	then invokes `utils\cdoc-tool.exe --rcpt <certFile> --in <input> --out <output>`.
-- `cdoc-tool.exe` is used to perform the actual CDOC protection/encryption; it must be
-	present in the module `utils/` directory.
-- On failure `Get-Certificate` exits with code 1 and `Protect-Cdoc` will throw an error.
-By default `Protect-Cdoc` removes temporary input and downloaded certificate files after successful processing. Use `-KeepTemp` to preserve the temporary input file.
-
-## Get-Certificate helper
-`Get-Certificate -ID <11-digit> [-Out <path|directory>]` will:
-- Lookup the certificate (LDAP) for the given ID,
-- Save the certificate bytes to a file named `cert_<ID>.cer` in the user's temp folder (or to `-Out` if provided),
-- Return the full path to the saved certificate on success, or exit with code 1 on failure.
-
-Example:
-
+# Pipeline / string mode (creates temporary .txt input)
 ```powershell
-# Save to default temp folder
-$certPath = Get-Certificate -ID 12345678901
-
-# Save to a specific directory
-$certPath = Get-Certificate -ID 12345678901 -Out C:\certs
-
-# Save to a specific file path
-$certPath = Get-Certificate -ID 12345678901 -Out C:\certs\mycert.cer
+Get-Content 'C:\data\input.cdoc' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
-## Next steps
-- Add unit tests and usage examples (help comments) for both functions.
-- Optional: cleanup downloaded certificate files after use or provide a `-KeepCert` switch.
+# Provide a custom temporary filename and keep it
+```powershell
+Get-Content 'C:\data\input.cdoc' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901 -TempFileName 'C:\temp\myinput.txt' -KeepTemp
+```
 
-## Notes about manifest
-`npu-cdoc-encrypt.psd1` has been updated to include files under `utils/` in `FileList`.
+## Notes
+
+- `-ID` is strictly validated to 11 numeric characters.
+- The module depends on `utils\cdoc-tool.exe` to perform the protection. Ensure the `utils/` directory and required DLLs are present.
+- Temporary certificate files saved to the system temp directory are removed after `cdoc-tool.exe` completes; use `-KeepTemp` only to preserve the temporary input.
 
 ## Contributing
-Open an issue or submit a PR with suggested changes. If you paste certificate-resolution or encryption code, I can integrate it into the module.
+
+Issues and pull requests are welcome. For integration help (certificate retrieval, additional cmdlets, automated tests), open an issue describing the change.
+
+For more details, see the module manifest (`npu-cdoc-encrypt.psd1`) and implementation (`npu-cdoc-encrypt.psm1`).
