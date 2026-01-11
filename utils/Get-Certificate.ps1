@@ -1,4 +1,4 @@
-function _get-esteid-certificate {
+function Get-EsteidCertificate {
     param(
         [string]$ID
     )
@@ -45,7 +45,7 @@ function _get-esteid-certificate {
     return $certBytes
 }
 
-function _get-thales-certificate {
+function Get-ThalesCertificate {
     param(
         [string]$ID
     )
@@ -117,9 +117,9 @@ function Get-Certificate {
         $Out
     )
 
-        $certBytes = _get-esteid-certificate -ID $ID
+        $certBytes = Get-EsteidCertificate -ID $ID
         if (-not $certBytes) {
-            $certBytes = _get-thales-certificate -ID $ID
+            $certBytes = Get-ThalesCertificate -ID $ID
         }
         if (-not $certBytes) {
             Write-Error "Could not retrieve certificate for ID '$ID'"
