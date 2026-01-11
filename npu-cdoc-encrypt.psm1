@@ -32,7 +32,7 @@ function Protect-Cdoc {
 	`cdoc-tool.exe` as `--rcpt`.
 
 	.EXAMPLE
-	Protect-Cdoc -In C:\data\file.cdoc -Out C:\out\file.cdoc -ID 12345678901
+	Protect-Cdoc -In C:\data\file.txt -Out C:\out\file.cdoc -ID 12345678901
 	#>
 	[CmdletBinding()]
 	param(
