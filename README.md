@@ -73,7 +73,7 @@ Get-Content 'C:\data\input.cdoc' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' 
 
 # Provide a custom temporary filename and keep it
 ```powershell
-Get-Content 'C:\data\input.cdoc' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901 -TempFileName 'C:\temp\myinput.txt' -KeepTemp
+Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901 -TempFileName 'C:\temp\myinput.txt' -KeepTemp
 ```
 
 ## Notes
