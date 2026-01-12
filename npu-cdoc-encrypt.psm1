@@ -1,4 +1,3 @@
-. "$PSScriptRoot\utils\Get-Certificate.ps1"
 
 function Protect-Cdoc {
 	<#
@@ -137,9 +136,10 @@ function Protect-Cdoc {
 			if ($LASTEXITCODE -ne 0) {
 				throw "cdoc-tool.exe failed with exit code $LASTEXITCODE."
 			}
-			Write-Verbose "cdoc-tool.exe completed successfully; output at '$Out'"
-			# Emit the output file path so callers can pipe the result
-			Write-Output $Out
+			$outFull = [System.IO.Path]::GetFullPath($Out)
+			Write-Verbose "cdoc-tool.exe completed successfully; output at '$outFull'"
+			# Emit the absolute output file path so callers can pipe the result
+			Write-Output $outFull
 		}
 		finally {
 			$cleanupCert = ($certPath -and $tempPathRoot -and $certPath.StartsWith($tempPathRoot, [System.StringComparison]::OrdinalIgnoreCase))
