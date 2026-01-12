@@ -1,4 +1,4 @@
-# npu-cdoc-encrypt
+# npu-cdoc-encrypt powershell module
 
 Lightweight PowerShell module to protect CDOC files using a certificate.
 
@@ -6,12 +6,6 @@ Lightweight PowerShell module to protect CDOC files using a certificate.
 
 - Primary command: `Protect-Cdoc` — entrypoint to protect a CDOC file.
 - Helper: `Get-Certificate` (in `utils/`) — resolves an 11-digit ID to a certificate file and saves it to disk.
-
-## Files of interest
-
-- Module: npu-cdoc-encrypt.psm1
-- Manifest: npu-cdoc-encrypt.psd1
-- Helper: utils/Get-Certificate.ps1
 
 ## Usage
 
@@ -21,15 +15,15 @@ Import the module (from the module folder):
 Import-Module .\npu-cdoc-encrypt.psm1
 ```
 
-# npu-cdoc-encrypt
+## npu-cdoc-encrypt
 
 This PowerShell module provides the `Protect-Cdoc` cmdlet to protect (encrypt) CDOC files using an X.509 certificate resolved by an 11‑digit identifier.
 
-## Synopsis
+### Synopsis
 
 Protects a CDOC using a certificate identified by an 11‑digit ID and the bundled `cdoc-tool.exe` utility.
 
-## Syntax
+### Syntax
 
 ```powershell
 Protect-Cdoc -InputFile <String> -Out <String> -ID <String>
@@ -37,7 +31,7 @@ Protect-Cdoc -InputFile <String> -Out <String> -ID <String>
 Protect-Cdoc -InputString <String> -Out <String> -ID <String> [-TempFileName <String>] [-KeepTemp]
 ```
 
-## Description
+### Description
 
 `Protect-Cdoc` accepts either a path to an input file (`-InputFile`) or raw content via `-InputString`/pipeline, resolves a recipient certificate by calling `Get-Certificate -ID <ID>`, and invokes `utils\cdoc-tool.exe` with the arguments `--rcpt <certFile> --in <input> --out <output>` to perform protection. If the `-Out` value contains only a filename (no directory), the protected file is written to the system temporary directory. On success the cmdlet writes the absolute path to the created output file to the pipeline. Temporary files (downloaded certificate and temporary input) are removed by default.
 
