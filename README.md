@@ -9,19 +9,19 @@ Lightweight PowerShell module to protect CDOC files using a certificate.
 
 ## Quick start
 
-1. Import the module from the module folder:
+1.Import the module from the module folder:
 
 ```powershell
 Import-Module .\npu-cdoc-encrypt\npu-cdoc-encrypt.psm1
 ```
 
-2. Protect a file (file mode):
+2.Protect a file (file mode):
 
 ```powershell
 Protect-Cdoc -InputFile 'C:\data\input.txt' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
-3. Protect content from the pipeline (string mode):
+3.Protect content from the pipeline (string mode):
 
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
@@ -101,7 +101,7 @@ For implementation details, see the module manifest and implementation files in 
 
 ## References
 
-- libcdoc — The `cdoc-tool.exe` included with this module is based on the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been adapted for use here. A fork containing the updated source is available at https://github.com/npuee/libcdoc.
+- libcdoc — The `cdoc-tool.exe` included with this module is based on the open-eid/libcdoc project (<https://github.com/open-eid/libcdoc/>) and has been adapted for use here. A fork containing the updated source is available at <https://github.com/npuee/libcdoc>.
 
 ## Changelog
 
