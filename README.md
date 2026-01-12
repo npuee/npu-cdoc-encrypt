@@ -101,7 +101,7 @@ For implementation details, see the module manifest and implementation files in 
 
 ## References
 
-- libcdoc — The `cdoc-tool.exe` included with this module is based on the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been adapted for use here. A fork containing the updated source and compiled binaries is available at https://github.com/npuee/libcdoc.
+- libcdoc — The `cdoc-tool.exe` included with this module is based on the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been adapted for use here. A fork containing the updated source is available at https://github.com/npuee/libcdoc.
 
 ## Changelog
 
