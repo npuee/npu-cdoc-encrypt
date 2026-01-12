@@ -42,7 +42,7 @@ Protect-Cdoc -InputString <String> -Out <String> -ID <String> [-TempFileName <St
 
 - Module: `npu-cdoc-encrypt.psm1`
 - Manifest: `npu-cdoc-encrypt.psd1`
-- Helper: `utils/Get-Certificate.ps1`
+- Helper: `Get-Certificate.psm1`
 - Bundled tool: `utils/cdoc-tool.exe` (and supporting DLLs)
 
 ## Parameters
