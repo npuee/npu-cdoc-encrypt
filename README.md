@@ -90,5 +90,5 @@ For more details, see the module manifest (`npu-cdoc-encrypt.psd1`) and implemen
 
 ## References
 
-- libcdoc — `cdoc-tool.exe` included in this repository was originally built from the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been modified for use in this project. Fork of the project is https://github.com/npuee/libcdoc latest dll/exe. Code is modified to work in this module is compiled.
+- libcdoc — The `cdoc-tool.exe` included with this module is based on the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been adapted for use here. A fork containing the updated source and compiled binaries is available at https://github.com/npuee/libcdoc.
 
