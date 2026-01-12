@@ -6,7 +6,6 @@ Lightweight PowerShell module to protect CDOC files using a certificate.
 
 - Primary command: `Protect-Cdoc` — entrypoint to protect a CDOC file.
 - Helper: `Get-Certificate` resolves an 11-digit ID to a certificate file and saves it to disk.
-- Purpose: Provide a small, scriptable wrapper around `cdoc-tool.exe` to protect (encrypt) CDOC files for a recipient certificate resolved 
 
 ## Quick start
 
@@ -19,7 +18,7 @@ Import-Module .\npu-cdoc-encrypt\npu-cdoc-encrypt.psm1
 2. Protect a file (file mode):
 
 ```powershell
-Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 12345678901
+Protect-Cdoc -InputFile 'C:\data\input.txt' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
 3. Protect content from the pipeline (string mode):
@@ -70,27 +69,23 @@ If `-Out` is a directory, the certificate is written as `cert_<ID>.cer`; if `-Ou
 ## Examples
 
 # File mode
+
 ```powershell
 Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
 # Pipeline / string mode (creates temporary .txt input)
+
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
 # Write to temp by using filename-only `-Out`
+
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'output.cdoc' -ID 12345678901
 # => writes to system temp directory and prints full path, e.g. C:\Users\<user>\AppData\Local\Temp\output.cdoc
 ```
-
-## Files of interest
-
-- Module: npu-cdoc-encrypt\npu-cdoc-encrypt.psm1
-- Manifest: npu-cdoc-encrypt\npu-cdoc-encrypt.psd1
-- Helper: npu-cdoc-encrypt\Get-Certificate.psm1
-- Bundled tool: npu-cdoc-encrypt\utils\cdoc-tool.exe (and supporting DLLs)
 
 ## Notes
 
