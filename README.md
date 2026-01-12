@@ -66,28 +66,28 @@ If `-Out` is a directory, the certificate is written as `cert_<ID>.cer`; if `-Ou
 - `-ID` (String): 11‑digit numeric certificate identifier (validated by regex `^\d{11}$`).
 - `-KeepTemp` (Switch): Preserve temporary input file created for `-InputString`.
 
-## Examples
+# Examples
 
-# File mode
+## File mode
 
 ```powershell
 Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
-# Pipeline / string mode (creates temporary .txt input)
+## Pipeline / string mode (creates temporary .txt input)
 
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
-# Write to temp by using filename-only `-Out`
+## Write to temp by using filename-only `-Out`
 
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'output.cdoc' -ID 12345678901
 # => writes to system temp directory and prints full path, e.g. C:\Users\<user>\AppData\Local\Temp\output.cdoc
 ```
 
-## Notes
+# Notes
 
 - `-ID` is strictly validated to 11 numeric characters.
 - The module depends on `utils\cdoc-tool.exe` to perform the protection. Ensure the `utils/` directory and required DLLs are present.
