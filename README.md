@@ -3,15 +3,18 @@
 Lightweight PowerShell module to protect CDOC files using a certificate.
 
 ## Overview
+
 - Primary command: `Protect-Cdoc` — entrypoint to protect a CDOC file.
 - Helper: `Get-Certificate` (in `utils/`) — resolves an 11-digit ID to a certificate file and saves it to disk.
 
 ## Files of interest
+
 - Module: npu-cdoc-encrypt.psm1
 - Manifest: npu-cdoc-encrypt.psd1
 - Helper: utils/Get-Certificate.ps1
 
 ## Usage
+
 Import the module (from the module folder):
 
 ```powershell
@@ -60,18 +63,21 @@ Protect-Cdoc -InputString <String> -Out <String> -ID <String> [-TempFileName <St
 
 ## Examples
 
-# File mode
+## File mode
+
 ```powershell
 Import-Module .\npu-cdoc-encrypt.psm1
 Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
-# Pipeline / string mode (creates temporary .txt input)
+## Pipeline / string mode (creates temporary .txt input)
+
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
-# Provide a custom temporary filename and keep it
+## Provide a custom temporary filename and keep it
+
 ```powershell
 Get-Content 'C:\data\input.txt' -Raw | Protect-Cdoc -Out 'C:\data\output.cdoc' -ID 12345678901 -TempFileName 'C:\temp\myinput.txt' -KeepTemp
 ```
@@ -91,4 +97,3 @@ For more details, see the module manifest (`npu-cdoc-encrypt.psd1`) and implemen
 ## References
 
 - libcdoc — The `cdoc-tool.exe` included with this module is based on the open-eid/libcdoc project (https://github.com/open-eid/libcdoc/) and has been adapted for use here. A fork containing the updated source and compiled binaries is available at https://github.com/npuee/libcdoc.
-
