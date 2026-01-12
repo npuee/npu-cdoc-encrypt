@@ -113,10 +113,16 @@ function Protect-Cdoc {
 			$cleanupInput = -not $KeepTemp.IsPresent
 		}
 
-		$outDir = Split-Path -Path $Out -Parent
-		if ($outDir -and -not (Test-Path -Path $outDir)) {
-			New-Item -ItemType Directory -Path $outDir -Force | Out-Null
-		}
+			# If -Out is only a filename (no directory part), place the output in the temp directory
+			$outDir = Split-Path -Path $Out -Parent
+			if (-not $outDir) {
+				$Out = [System.IO.Path]::Combine($tempPathRoot, $Out)
+				Write-Verbose "-Out appears to be filename-only; using temp directory: '$Out'"
+				$outDir = Split-Path -Path $Out -Parent
+			}
+			if ($outDir -and -not (Test-Path -Path $outDir)) {
+				New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+			}
 
 		# Resolve certificate file using helper with structured error handling
 		try {

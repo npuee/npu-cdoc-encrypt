@@ -36,7 +36,7 @@ Protect-Cdoc -InputString <String> -Out <String> -ID <String> [-TempFileName <St
 
 ## Description
 
-`Protect-Cdoc` accepts either a path to an input file (`-InputFile`) or raw content via `-InputString`/pipeline, resolves a recipient certificate by calling `Get-Certificate -ID <ID>`, and invokes `utils\cdoc-tool.exe` with the arguments `--rcpt <certFile> --in <input> --out <output>` to perform protection. Temporary files (downloaded certificate and temporary input) are removed by default.
+`Protect-Cdoc` accepts either a path to an input file (`-InputFile`) or raw content via `-InputString`/pipeline, resolves a recipient certificate by calling `Get-Certificate -ID <ID>`, and invokes `utils\cdoc-tool.exe` with the arguments `--rcpt <certFile> --in <input> --out <output>` to perform protection. If the `-Out` value contains only a filename (no directory), the protected file is written to the system temporary directory. On success the cmdlet writes the absolute path to the created output file to the pipeline. Temporary files (downloaded certificate and temporary input) are removed by default.
 
 ## Files of interest
 
@@ -50,7 +50,7 @@ Protect-Cdoc -InputString <String> -Out <String> -ID <String> [-TempFileName <St
 - `-InputFile` (String) — Path to an existing CDOC input file. Use this parameter or `-InputString`.
 - `-InputString` (String) — Raw input content. When used, a temporary `.txt` input file is created unless the pipeline provides a file.
 - `-TempFileName` (String) — Optional name or path for the temporary input file created when using `-InputString`.
-- `-Out` (String) — Destination path for the protected output CDOC file. Parent directories are created if needed.
+- `-Out` (String) — Destination path for the protected output CDOC file. If `-Out` contains only a filename (no directory), the module will write the output into the system temporary directory. Parent directories are created if needed. The cmdlet emits the absolute path to the created output file on success.
 - `-ID` (String) — 11‑digit numeric certificate identifier. Validated by the cmdlet (regex `^\d{11}$`).
 - `-KeepTemp` (Switch) — Preserve the temporary input file created for `-InputString`.
 
