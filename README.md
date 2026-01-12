@@ -71,7 +71,7 @@ If `-Out` is a directory, the certificate is written as `cert_<ID>.cer`; if `-Ou
 ### File mode
 
 ```powershell
-Protect-Cdoc -InputFile 'C:\data\input.cdoc' -Out 'C:\data\output.cdoc' -ID 12345678901
+Protect-Cdoc -InputFile 'C:\data\input.txt' -Out 'C:\data\output.cdoc' -ID 12345678901
 ```
 
 ### Pipeline / string mode (creates temporary .txt input)
