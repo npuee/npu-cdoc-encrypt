@@ -5,7 +5,7 @@ Lightweight PowerShell module to protect CDOC files using a certificate.
 ## Overview
 
 - Primary command: `Protect-Cdoc` — entrypoint to protect a CDOC file.
-- Helper: `Get-Certificate` resolves an 11-digit ID to a certificate file and saves it to disk.
+- Helper: `Get-Certificate` resolves an 11-digit ID to a Estonian National certificate file and saves it to disk.
 
 ## Quick start
 
